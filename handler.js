@@ -1,11 +1,11 @@
 import { serialize } from './lib/simple.js'
 global.set = {
-  owner: '', //Id telegram kamu
+  owner: '6210960622', //Id telegram kamu
     menuBtn: '☰ MENU',
     infoBtn: '☰ INFO',
     pingBtn: '☰ PING',
     faktaBtn: '☰ FAKTA',
-    apikey: '' // Silahkan registrasi di https://nekohime.xyz/signup
+    apikey: 'NekohimeLLC' // Silahkan registrasi di https://nekohime.xyz/signup
 }
 var isNumber = x => typeof x === 'number' && !isNaN(x)
 export const handler = function handler(ctx) {

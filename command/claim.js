@@ -10,10 +10,10 @@ const apel = 10
 const potion = 5
 const coin = 500
 const saldoATM = 250
-  let __timers = new Date() - user.lastclaim;
+  let __timers = new Date() - user.lastdaily;
   let _timers = 86400000 - __timers;
   let timers = clockString(_timers);
-  if (new Date() - user.lastclaim > 86400000) {
+  if (new Date() - user.lastdaily > 86400000) {
     conn.sendButton(m.chat, `Anda sudah mengklaim dan mendapatkan 
 💵 Uang: ${uang}
 🍞 Roti: ${roti}
@@ -27,7 +27,7 @@ const saldoATM = 250
     global.db.data.users[m.sender].roti += roti * 1;
     global.db.data.users[m.sender].coin += coin * 1;
     global.db.data.users[m.sender].saldoATM += saldoATM * 1;
-    global.db.data.users[m.sender].lastclaim = new Date() * 1;
+    global.db.data.users[m.sender].lastdaily = new Date() * 1;
   } else m.reply(`Anda harus menunggu *${timers}* lagi untuk mengklaim.`);
     },
 };

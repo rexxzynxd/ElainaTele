@@ -1,0 +1,52 @@
+{
+  "users": {
+    "6210960622": {
+      "healt": 100,
+      "level": 0,
+      "exp": 0,
+      "potion": 5,
+      "money": 1000,
+      "coin": 500,
+      "lastdaily": 1758951270057,
+      "lastweekly": 0,
+      "lastmonthly": 0,
+      "common": 0,
+      "uncommon": 0,
+      "mythic": 0,
+      "legendary": 0,
+      "epic": 0,
+      "apel": 10,
+      "saldoATM": 250,
+      "roti": 5,
+      "gold_ticket": 0,
+      "blue_ticket": 0,
+      "sword": 0
+    }
+  },
+  "chats": {
+    "6210960622": {
+      "isBanned": false,
+      "welcome": false,
+      "detect": false,
+      "sWelcome": "",
+      "sBye": "",
+      "sPromote": "",
+      "sDemote": "",
+      "delete": false,
+      "antiLink": false,
+      "expired": 0
+    }
+  },
+  "settings": {
+    "7207786423": {
+      "antispam": true,
+      "backup": false,
+      "backupTime": 0,
+      "group": false,
+      "restrict": false,
+      "self": false,
+      "unbannedwa": 0
+    }
+  },
+  "stats": {}
+}

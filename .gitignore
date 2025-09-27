@@ -1,2 +1,6 @@
 node_modules/
 package-lock.json
+lib/scrape.js
+lib/simple.js
+database.json
+.gitignore

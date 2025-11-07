@@ -1,17 +1,14 @@
 [![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/colored.png)](#table-of-contents)
 
 <p align="center">
-<img src="https://github.com/Galang-Purnama.png" alt="Galang" height="90"/>
+<img src="https://github.com/RexxHayanasi.png" alt="RexxHayanasi" height="90"/>
 </p>
 
 <p align="center">
-<a href="#"><img title="Nekohime Tele" src="https://img.shields.io/badge/TELEGRAM BOT-cyan?colorA=%5df9ff00&colorB=%23017e40&style=for-the-badge"></a>
+<a href="#"><img title="ElainaBot Tele" src="https://img.shields.io/badge/TELEGRAM BOT-cyan?colorA=%5df9ff00&colorB=%23017e40&style=for-the-badge"></a>
 </p>
 <p align="center">
-<a href="https://github.com/Galang-Purnama/NekohimeTele"><img title="Author" src="https://img.shields.io/badge/Galang-Purnama-red.svg?style=for-the-badge&logo=github"></a>
-</p>
-<p align="center">
-<a href="https://github.com/Galang-Purnama/NekohimeTele"><img title="Open Source" src="https://badges.frapsoft.com/os/v2/open-source.svg?v=103"></a>
+<a href="https://github.com/RexxzynXD/ElainaTele"><img title="Author" src="https://img.shields.io/badge/Galang-Purnama-red.svg?style=for-the-badge&logo=github"></a>
 </p>
 </div>
 
@@ -91,6 +88,5 @@ node index.js
 ### `THANKS`
 - Telegraf & Telegram
 - My God
-- [My self](https://github.com/Galang-Purnama)
-- [Nekohime API](https://nekohime.xyz)
+- [My self](https://github.com/RexxHayanasi)
 - And all Support.

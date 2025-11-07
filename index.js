@@ -21,7 +21,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
     ].join("\n")
   );
   console.log(duck);
-  console.log("\n======================================\nScript by : Galang Purnama\nInstagram : galangpurnama.my.id\nGithub: Galang-Purnama\nTelegram: @GalangP_Dev\n======================================\n")
+  console.log("\n======================================\nRecode by : RexxHayanasi\nInstagram : @rexxzynxd\nGithub: RexxHayanasi\nTelegram: @RexxHayanasi\n======================================\n")
   function start(fileName) {
   const childProcess = spawn('node', [fileName], {
     cwd: __dirname,
@@ -31,7 +31,5 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
   childProcess.on('error', (err) => {
     console.error(`Error starting ${fileName}:`, err.message);
   });
-}
 
-// Contoh pemanggilan: memulai 'main.js'
 start('main.js');

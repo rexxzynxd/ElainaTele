@@ -1,4 +1,6 @@
 import './config.js'
+import moment from 'moment-timezone'
+import canvafy from 'canvafy'
 import { serialize } from './lib/simple.js'
 
 global.set = global.config
@@ -117,3 +119,31 @@ export class PermissionChecker {
     return !isPrems
   }
       }
+export function ucapan() {
+  const time = moment.tz('Asia/Jakarta').format('HH')
+  let res = 'Selamat Dinihari'
+  if (time >= 4) res = 'Selamat Pagi'
+  if (time >= 10) res = 'Selamat Siang'
+  if (time >= 15) res = 'Selamat Sore'
+  if (time >= 18) res = 'Selamat Malam'
+  return res
+}
+
+export async function welcomeBanner(avatar, name, subject, type) {
+  const title = (type === 'welcome' ? 'Halo, ' : 'Sayonara, ') + name
+  const desc = (type === 'welcome' ? 'Selamat datang di ' : 'Keluar dari ') + subject
+  const background = [
+    'https://pomf2.lain.la/f/miskhj5i.jpg',
+    'https://pomf2.lain.la/f/lfo1en8.png'
+  ]
+  const welcome = await new canvafy.WelcomeLeave()
+    .setAvatar(avatar)
+    .setBackground('image', background[Math.floor(Math.random() * background.length)])
+    .setTitle(title.length > 20 ? title.substring(0, 16) + '..' : title)
+    .setDescription(desc.length > 70 ? desc.substring(0, 65) + '..' : desc)
+    .setBorder('#2a2e35')
+    .setAvatarBorder('#2a2e35')
+    .setOverlayOpacity(0.3)
+    .build()
+  return welcome
+    }

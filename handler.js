@@ -1,121 +1,77 @@
+import { serialize } from './lib/simple.js'
 import moment from 'moment-timezone'
 import canvafy from 'canvafy'
-import { serialize } from './lib/simple.js'
 
-var isNumber = x => typeof x === 'number' && !isNaN(x)
+global.set = global.config
+
+function isNumber(x) {
+  return typeof x === 'number' && !isNaN(x)
+}
+
 export const handler = function handler(ctx) {
-  var m = serialize(ctx)
+  const m = serialize(ctx)
   try {
-    var user = db.data.users[m.sender]
+    let user = db.data.users[m.sender]
     if (typeof user !== 'object') db.data.users[m.sender] = {}
     if (user) {
       if (!isNumber(user.healt)) user.healt = 0
       if (!isNumber(user.level)) user.level = 0
       if (!isNumber(user.exp)) user.exp = 0
-      if (!isNumber(user.sword)) user.sword = 0
-      if (!isNumber(user.potion)) user.potion = 0
       if (!isNumber(user.money)) user.money = 0
       if (!isNumber(user.coin)) user.coin = 0
       if (!isNumber(user.lastdaily)) user.lastdaily = 0
       if (!isNumber(user.lastweekly)) user.lastweekly = 0
       if (!isNumber(user.lastmonthly)) user.lastmonthly = 0
-      if (!isNumber(user.common)) user.common = 0
-      if (!isNumber(user.uncommon)) user.uncommon = 0
-      if (!isNumber(user.mythic)) user.mythic = 0
-      if (!isNumber(user.legendary)) user.legendary = 0
-      if (!isNumber(user.epic)) user.epic = 0
-      if (!isNumber(user.saldoATM)) user.saldoATM = 0
       if (!isNumber(user.apel)) user.apel = 0
       if (!isNumber(user.roti)) user.roti = 0
       if (!isNumber(user.gold_ticket)) user.gold_ticket = 0
       if (!isNumber(user.blue_ticket)) user.blue_ticket = 0
-    } else global.db.data.users[m.sender] = {
-      healt: 100,
-      level: 0,
-      exp: 0,
-      potion: 0,
-      money: 0,
-      coin: 0,
-      lastdaily: 0,
-      lastweekly: 0,
-      lastmonthly: 0,
-      common: 0,
-      uncommon: 0,
-      mythic: 0,
-      legendary: 0,
-      epic: 0,
-      apel: 0,
-      saldoATM: 0,
-      roti: 0,
-      gold_ticket: 0,
-      blue_ticket: 0
+    } else {
+      global.db.data.users[m.sender] = {
+        healt: 100,
+        level: 0,
+        exp: 0,
+        money: 0,
+        coin: 0,
+        lastdaily: 0,
+        lastweekly: 0,
+        lastmonthly: 0,
+        apel: 0,
+        roti: 0,
+        gold_ticket: 0,
+        blue_ticket: 0
+      }
     }
 
     let chat = global.db.data.chats[m.chat]
     if (typeof chat !== 'object') global.db.data.chats[m.chat] = {}
     if (chat) {
-      if (!('isBanned' in chat)) chat.isBanned = false
       if (!('welcome' in chat)) chat.welcome = false
       if (!('leave' in chat)) chat.leave = false
-      if (!('sWelcome' in chat)) chat.sWelcome = ''
-      if (!('sBye' in chat)) chat.sBye = ''
-      if (!('detect' in chat)) chat.detect = false
-    } else global.db.data.chats[m.chat] = {
-      isBanned: false,
-      welcome: false,
-      leave: false,
-      detect: false,
-      sWelcome: '',
-      sBye: ''
+    } else {
+      global.db.data.chats[m.chat] = { welcome: false, leave: false }
     }
 
     let settings = global.db.data.settings[ctx.botInfo.id]
     if (typeof settings !== 'object') global.db.data.settings[ctx.botInfo.id] = {}
     if (settings) {
-      if (!'backup' in settings) settings.backup = false
-      if (!isNumber(settings.backupTime)) settings.backupTime = 0
-      if (!'group' in settings) settings.group = false
-      if (!'restrict' in settings) settings.restrict = false
-      if (!'self' in settings) settings.self = false
-      if (!isNumber(settings.unbannedwa)) settings.unbannedwa = 0
-    } else global.db.data.settings[ctx.botInfo.id] = {
-      antispam: true,
-      backup: false,
-      backupTime: 0,
-      group: false,
-      restrict: false,
-      self: false,
-      unbannedwa: 0
+      if (!('self' in settings)) settings.self = false
+    } else {
+      global.db.data.settings[ctx.botInfo.id] = { self: false }
     }
-
     global.db.write()
   } catch (e) {
     console.error(e)
   }
 }
 
-const Owner = global.config.owner
-export class PermissionChecker {
-  constructor(userId) {
-    this.userId = userId
-  }
-  isOwner() {
-    return Owner.some((o) => String(o).includes(this.userId))
-  }
-  premium() {
-    const user = global.db.data.users[this.userId] || {}
-    return user.premium === true
-  }
-}
-
+// ======== SYSTEM UCAPAN & BANNER ========
 export function ucapan() {
   const time = moment.tz('Asia/Jakarta').format('HH')
-  let res = 'Selamat Dinihari'
-  if (time >= 4) res = 'Selamat Pagi'
-  if (time >= 10) res = 'Selamat Siang'
-  if (time >= 15) res = 'Selamat Sore'
-  if (time >= 18) res = 'Selamat Malam'
-  return res
+  if (time >= 4 && time < 10) return 'Selamat Pagi'
+  if (time >= 10 && time < 15) return 'Selamat Siang'
+  if (time >= 15 && time < 18) return 'Selamat Sore'
+  return 'Selamat Malam'
 }
 
 export async function welcomeBanner(avatar, name, subject, type) {
@@ -125,7 +81,7 @@ export async function welcomeBanner(avatar, name, subject, type) {
     'https://pomf2.lain.la/f/miskhj5i.jpg',
     'https://pomf2.lain.la/f/lfo1en8.png'
   ]
-  const welcome = await new canvafy.WelcomeLeave()
+  const img = await new canvafy.WelcomeLeave()
     .setAvatar(avatar)
     .setBackground('image', background[Math.floor(Math.random() * background.length)])
     .setTitle(title.length > 20 ? title.substring(0, 16) + '..' : title)
@@ -134,5 +90,21 @@ export async function welcomeBanner(avatar, name, subject, type) {
     .setAvatarBorder('#2a2e35')
     .setOverlayOpacity(0.3)
     .build()
-  return welcome
+  return img
 }
+
+// ======== PERMISSION CHECKER ========
+export class PermissionChecker {
+  constructor(userId) {
+    this.userId = String(userId)
+  }
+
+  isOwner() {
+    return global.config.owner.some((o) => String(o).includes(this.userId))
+  }
+
+  premium() {
+    const user = global.db.data.users[this.userId]
+    return user?.premium || false
+  }
+      }

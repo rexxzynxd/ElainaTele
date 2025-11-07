@@ -31,5 +31,6 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
   childProcess.on('error', (err) => {
     console.error(`Error starting ${fileName}:`, err.message);
   });
+  }
 
 start('main.js');

@@ -1,6 +1,6 @@
 global.config = {
   tokenbot: '', //ID TOKEN BOT LU dari @faherbot
-  owner: '6210960622',      // ID Telegram kamu (tanpa @)
+  owner: [12345678, 0812345678, RexxHayanasi, true ], // ID Telegram kamu (tanpa @), nomor telepon , nama owner, true/false
   ownerName: 'RexxHayanasi', // Nama owner (opsional)
   // Tombol di menu / info
   menuBtn: '☰ MENU',

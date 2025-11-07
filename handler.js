@@ -1,12 +1,8 @@
-import './config.js'
 import moment from 'moment-timezone'
 import canvafy from 'canvafy'
 import { serialize } from './lib/simple.js'
 
-global.set = global.config
-
 var isNumber = x => typeof x === 'number' && !isNaN(x)
-
 export const handler = function handler(ctx) {
   var m = serialize(ctx)
   try {
@@ -60,24 +56,17 @@ export const handler = function handler(ctx) {
     if (chat) {
       if (!('isBanned' in chat)) chat.isBanned = false
       if (!('welcome' in chat)) chat.welcome = false
-      if (!('expired' in chat)) chat.expired = 0
-      if (!('detect' in chat)) chat.detect = false
+      if (!('leave' in chat)) chat.leave = false
       if (!('sWelcome' in chat)) chat.sWelcome = ''
       if (!('sBye' in chat)) chat.sBye = ''
-      if (!('sPromote' in chat)) chat.sPromote = ''
-      if (!('sDemote' in chat)) chat.sDemote = ''
-      if (!('delete' in chat)) chat.delete = false
-      if (!('antiLink' in chat)) chat.antiLink = false
+      if (!('detect' in chat)) chat.detect = false
     } else global.db.data.chats[m.chat] = {
       isBanned: false,
       welcome: false,
+      leave: false,
       detect: false,
       sWelcome: '',
-      sBye: '',
-      sPromote: '',
-      sDemote: '',
-      delete: false,
-      antiLink: false
+      sBye: ''
     }
 
     let settings = global.db.data.settings[ctx.botInfo.id]
@@ -91,7 +80,6 @@ export const handler = function handler(ctx) {
       if (!isNumber(settings.unbannedwa)) settings.unbannedwa = 0
     } else global.db.data.settings[ctx.botInfo.id] = {
       antispam: true,
-      backup: true,
       backup: false,
       backupTime: 0,
       group: false,
@@ -99,6 +87,7 @@ export const handler = function handler(ctx) {
       self: false,
       unbannedwa: 0
     }
+
     global.db.write()
   } catch (e) {
     console.error(e)
@@ -106,19 +95,19 @@ export const handler = function handler(ctx) {
 }
 
 const Owner = global.config.owner
-var isPrems = Owner || db.data.users[m.sender].premium
-
 export class PermissionChecker {
   constructor(userId) {
     this.userId = userId
   }
   isOwner() {
-    return this.userId === Owner
+    return Owner.some((o) => String(o).includes(this.userId))
   }
   premium() {
-    return !isPrems
+    const user = global.db.data.users[this.userId] || {}
+    return user.premium === true
   }
-      }
+}
+
 export function ucapan() {
   const time = moment.tz('Asia/Jakarta').format('HH')
   let res = 'Selamat Dinihari'
@@ -146,4 +135,4 @@ export async function welcomeBanner(avatar, name, subject, type) {
     .setOverlayOpacity(0.3)
     .build()
   return welcome
-    }
+}

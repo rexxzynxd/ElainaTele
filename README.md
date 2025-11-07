@@ -8,7 +8,7 @@
 <a href="#"><img title="ElainaBot Tele" src="https://img.shields.io/badge/TELEGRAM BOT-cyan?colorA=%5df9ff00&colorB=%23017e40&style=for-the-badge"></a>
 </p>
 <p align="center">
-<a href="https://github.com/RexxzynXD/ElainaTele"><img title="Author" src="https://img.shields.io/badge/Galang-Purnama-red.svg?style=for-the-badge&logo=github"></a>
+<a href="https://github.com/RexxzynXD/ElainaTele"><img title="Author" src="https://img.shields.io/badge/RexxHayanasi-red.svg?style=for-the-badge&logo=github"></a>
 </p>
 </div>
 

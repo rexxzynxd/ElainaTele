@@ -6,10 +6,14 @@ export default {
   cmd: ['sp', 'gp', 'dp', 'ep'],
   tags: ['owner'],
   isOwner: true,
-  desc: 'Menyimpan (.sp), ambil (.gp), hapus (.dp), edit (.ep) plugin',
+  desc: 'Menyimpan (.sp), ambil (.gp), hapus (.dp), dan edit (.ep) plugin',
 
   async run({ m, text, conn, command }) {
     try {
+      const senderId = m.sender?.toString() || ''
+      const isOwner = global.config.owner.some((o) => String(o).includes(senderId))
+      if (!isOwner) return m.reply('❌ Hanya owner yang bisa menggunakan perintah ini.')
+
       const __dirname = dirname(fileURLToPath(import.meta.url))
       const pluginsDir = join(__dirname, '../')
       if (!text) return m.reply('Format:\n.sp folder/namafile.js (reply kode JS)')
@@ -64,5 +68,5 @@ export default {
     } catch (e) {
       m.reply(`💥 Error: ${e.message}`)
     }
-  },
-    }
+  }
+}

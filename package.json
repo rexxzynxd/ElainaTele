@@ -1,6 +1,6 @@
 {
-  "name": "nekohimebot",
-  "version": "5.0",
+  "name": "ElainTele",
+  "version": "1.0",
   "description": "Telegram Bot Build Using Nodejs",
   "main": "index.js",
   "type": "module",
@@ -15,7 +15,7 @@
     "test2": "nodemon index.js"
   },
   "keywords": [
-    "nekohimeTele"
+    "ElainaTele"
   ],
   "dependencies": {
     "axios": "^1.6.2",
@@ -28,7 +28,6 @@
     "lodash": "^4.17.21",
     "lowdb": "^3.0.0",
     "moment": "^2.29.4",
-    "node-fetch": "^3.3.2",
     "perf_hooks": "^0.0.1",
     "stream": "^0.0.2",
     "telegraf": "^4.15.3",

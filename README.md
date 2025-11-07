@@ -73,7 +73,7 @@ Add to PATH environment variable
 
 ## Install Script
 ```bash
-git clone https://github.com/Galang-Purnama/NekohimeTele.git
+git clone https://github.com/rexxzynxd/ElainaTele.git
 cd NekohimeTele
 npm install
 ```

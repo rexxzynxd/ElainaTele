@@ -1,106 +1,87 @@
 // main.js
-import './handler.js'
+import './handler.js';
 import { conn, serialize } from './lib/simple.js';
-import { readdirSync } from 'fs';
-import path, { join, dirname } from 'path';
-import { fileURLToPath } from 'node:url';
+import { loadPlugins, watchPlugins } from './lib/pluginsload.js';
+import { handler, PermissionChecker } from './handler.js';
 import axios from 'axios';
 import lodash from 'lodash';
 import fs from 'fs';
-import { handler, PermissionChecker } from './handler.js';
 
-// ================= LOAD COMMANDS =================
-async function loadCommands() {
-  const __dirname = dirname(fileURLToPath(import.meta.url));
-  const commandFiles = readdirSync(join(__dirname, 'command')).filter((file) =>
-    file.endsWith('.js')
-  );
-
-  const commands = await Promise.all(
-    commandFiles.map(async (file) => {
-      const modulePath = `./command/${file}`;
-      const commandModule = await import(modulePath);
-      return commandModule.default || commandModule;
-    })
-  );
-
-  // ================= GLOBAL API =================
-  global.API = async (baseUrl, data = {}, headers = {}, method = 'get') => {
-    try {
-      const response = await axios({
-        method: method.toLowerCase(),
-        url: baseUrl,
-        ...(method.toLowerCase() === 'get' ? { params: data } : { data: data }),
-        headers,
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Error calling API:', error);
-      throw error;
-    }
-  };
-
-  // ================= DATABASE =================
-  var low;
+// ================= GLOBAL API =================
+global.API = async (baseUrl, data = {}, headers = {}, method = 'get') => {
   try {
-    low = await import('lowdb');
-  } catch (e) {
-    low = await import('./lib/lowdb.js');
+    const response = await axios({
+      method: method.toLowerCase(),
+      url: baseUrl,
+      ...(method.toLowerCase() === 'get' ? { params: data } : { data }),
+      headers,
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error calling API:', error);
+    throw error;
   }
-  const { LowSync, JSONFileSync } = low;
-  if (!fs.existsSync('./database.json')) {
-    fs.writeFileSync('./database.json', '{}');
-  }
-  const adapter = new JSONFileSync('./database.json');
-  global.db = new LowSync(adapter);
+};
 
-  global.loadDatabase = async function loadDatabase() {
-    if (global.db.READ)
-      return new Promise((resolve) =>
-        setInterval(function () {
-          !global.db.READ
-            ? (clearInterval(this),
-              resolve(
-                global.db.data == null ? global.loadDatabase() : global.db.data
-              ))
-            : null;
-        }, 1000)
-      );
+// ================= DATABASE =================
+var low;
+try {
+  low = await import('lowdb');
+} catch {
+  low = await import('./lib/lowdb.js');
+}
+const { LowSync, JSONFileSync } = low;
+if (!fs.existsSync('./database.json')) fs.writeFileSync('./database.json', '{}');
+const adapter = new JSONFileSync('./database.json');
+global.db = new LowSync(adapter);
 
-    if (global.db.data !== null) return;
-    global.db.READ = true;
-    await global.db.read();
-    global.db.READ = false;
-    global.db.data = {
-      users: {},
-      chats: {},
-      settings: {},
-      stats: {},
-      ...(global.db.data || {}),
-    };
-    global.db.chain = lodash.chain(global.db.data);
+global.loadDatabase = async function loadDatabase() {
+  if (global.db.READ)
+    return new Promise((resolve) =>
+      setInterval(function () {
+        !global.db.READ
+          ? (clearInterval(this),
+            resolve(global.db.data == null ? global.loadDatabase() : global.db.data))
+          : null;
+      }, 1000)
+    );
+
+  if (global.db.data !== null) return;
+  global.db.READ = true;
+  await global.db.read();
+  global.db.READ = false;
+  global.db.data = {
+    users: {},
+    chats: {},
+    settings: {},
+    stats: {},
+    ...(global.db.data || {}),
   };
+  global.db.chain = lodash.chain(global.db.data);
+};
 
-  loadDatabase();
+loadDatabase();
+if (global.db)
+  setInterval(async () => {
+    if (global.db.data) await global.db.write();
+  }, 3000);
 
-  if (global.db)
-    setInterval(async () => {
-      if (global.db.data) await global.db.write();
-    }, 3000);
+// ================= REGISTER PLUGINS =================
+async function registerPlugins() {
+  const plugins = await loadPlugins();
 
-  // ================= REGISTER COMMANDS =================
-  commands.forEach((command) => {
-    if (command && command.cmd && command.run) {
-      conn.command(command.cmd, async (ctx) => {
+  Object.entries(plugins).forEach(([filename, plugin]) => {
+    if (plugin && plugin.cmd && plugin.run) {
+      conn.command(plugin.cmd, async (ctx) => {
         await global.loadDatabase();
         handler(ctx);
 
         const permissionChecker = new PermissionChecker(ctx.from.id.toString());
-        if (command.isOwner && !permissionChecker.isOwner()) {
+        if (plugin.isOwner && !permissionChecker.isOwner()) {
           await ctx.reply('Maaf, fitur ini hanya untuk pemilik bot.');
           return;
         }
-        if (command.premium && !permissionChecker.premium()) {
+        if (plugin.premium && !permissionChecker.premium()) {
           await ctx.reply('Maaf, fitur ini hanya untuk pengguna premium.');
           return;
         }
@@ -109,14 +90,19 @@ async function loadCommands() {
         const [cmd, ...args] = ctx.message.text.split(/\s+/);
         const textAfterCommand = args.join(' ');
 
-        await command.run({
-          conn,
-          m: serializedContext,
-          prefix: '/',
-          text: textAfterCommand || undefined,
-          command: cmd,
-          args,
-        });
+        try {
+          await plugin.run({
+            conn,
+            m: serializedContext,
+            prefix: '/',
+            text: textAfterCommand || undefined,
+            command: cmd,
+            args,
+          });
+        } catch (e) {
+          console.error(`[💥] Error executing plugin '${filename}':`, e);
+          await ctx.reply('⚠️ Terjadi kesalahan saat menjalankan perintah ini.');
+        }
       });
     }
   });
@@ -124,15 +110,16 @@ async function loadCommands() {
 
 // ================= BOT STARTUP =================
 conn.start((ctx) => {
-  ctx.reply('Halo! Aku adalah bot Telegram sederhana. Cobalah kirim pesan /menu');
+  ctx.reply('Halo! Aku adalah Elaina BotTele. Cobalah kirim pesan /menu');
 });
 
-loadCommands()
+registerPlugins()
   .then(() => {
     conn.launch().then(() => {
-      console.log('Bot is running...');
+      console.log('🤖 Bot is running...');
+      watchPlugins(); // 👀 aktifkan watcher auto reload
     });
   })
   .catch((err) => {
-    console.error('Error loading commands:', err);
+    console.error('Error loading plugins:', err);
   });
